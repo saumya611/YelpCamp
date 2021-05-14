@@ -1,40 +1,32 @@
-
-const { campgroundSchema } = require('./schemas.js')
 const ExpressError = require('./utils/ExpressError')
 const Campground = require('./models/campground')
 const Review = require('./models/review.js')
 const catchAsync = require('./utils/catchAsync.js');
-
+const { campgroundSchema, reviewSchema} = require('./schemas.js');
 
 module.exports.isLoggedIn = (req, res, next) => {
-    console.log("REQ.USER....", req.user);
+    console.log("In The Middleware");
     if(!req.isAuthenticated()){
+        console.log("REQ.USER....", req.user);
         // console.log(req.path, req.originalUrl);
         req.session.returnTo = req.originalUrl;
         req.flash('error', 'you must be signed in first');
         return res.redirect('/login');
     }
     next();
-}
+};
 
 module.exports.validateCampground = (req, res, next) => {
-    // const campgroundSchema = joi.object({
-    //     campground: joi.object({
-    //         title: joi.string().required(),
-    //         price: joi.number().required().min(0),
-    //         image: joi.string().required,
-    //         location: joi.string().required,
-    //         descriptiom: joi.string().required()
-    //     }).required()
-    // })
     const {error} = campgroundSchema.validate(req.body);
+    console.log("In The Middleware");
+    console.log(req.body);
     if(error){
         const msg = error.details.map(el => el.message).join(', ');
         next(new ExpressError(msg, 400));
     } else{
         next();
     }
-}
+};
 
 module.exports.isAuthor = async(req, res, next) => {
     const { id } = req.params;
@@ -44,9 +36,10 @@ module.exports.isAuthor = async(req, res, next) => {
         return res.redirect(`/campgrounds/${id}`);
     }
     next();
-}  
+};
 
-module.exports.isReviewAuthor = catchAsync( async(req, res, next) => {
+module.exports.isReviewAuthor = async(req, res, next) => {
+    console.log("In The Middleware");
     const { id, reviewId } = req.params;
     const review = await Review.findById(reviewId);
     if(!review.author.equals(req.user._id)){
@@ -54,14 +47,15 @@ module.exports.isReviewAuthor = catchAsync( async(req, res, next) => {
         return res.redirect(`/campgrounds/${id}`);
     }
     next();
-})
+};
 
 module.exports.validateReview = (req, res, next) => {
+    console.log("In The Middleware");
     const { error} = reviewSchema.validate(req.body);
     if(error){
-        const msg = error.details.map(el => el.message).join(', ');
+        const msg = error.details.map(el => el.message).join(',');
         next(new ExpressError(msg, 400));
     } else{
         next();
     }
-}
+};
