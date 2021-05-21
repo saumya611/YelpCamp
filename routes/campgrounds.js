@@ -12,15 +12,29 @@ const { isLoggedIn, validateCampground, isAuthor } = require('../middleware');
 
 const campgrounds = require('../controllers/campgrounds');
 
+const multer = require('multer');
+const { storage } = require('../cloudinary');
+const upload = multer({ storage });
+
 router.route('/')
     .get(catchAsync(campgrounds.indexPage))
-    .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground));
+    .post(isLoggedIn, upload.array('image'), validateCampground, catchAsync(campgrounds.createCampground));
+    // .post(upload.single('image'), (req, res) => {
+    //     console.log(req.body, req.file);
+    //     res.send('Work Done');
+    // })
+    // .post(upload.array('image'), (req, res) => {
+    //     console.log(req.body, req.files);
+    //     res.send('Work Done');
+    // });
+
 
 router.get('/new', isLoggedIn, catchAsync(campgrounds.renderNewForm));
 
+
 router.route('/:id')
     .get(catchAsync(campgrounds.showCampground))
-    .put(isLoggedIn, isAuthor, validateCampground, catchAsync(campgrounds.updateCampground ))
+    .put(isLoggedIn, isAuthor, upload.array('image'), validateCampground, catchAsync(campgrounds.updateCampground ))
     .delete(isLoggedIn, isAuthor, catchAsync( campgrounds.deleteCampground));
 
 router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(campgrounds.renderEditForm));

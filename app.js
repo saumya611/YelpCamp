@@ -13,6 +13,7 @@ const ExpressError = require('./utils/ExpressError.js');
 const methodOverride = require('method-override');
 const passport = require('passport');
 const localStrategy = require('passport-local');
+const mongoSanitize = require('express-mongo-sanitize');
 
 const User = require('./models/user');
 const userRoutes = require('./routes/users.js');
@@ -26,8 +27,8 @@ const MongoStore = require("connect-mongo");
 // const joi = require('joi');
 // const { ppid } = require('process');
 
-const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
-// const dbUrl = 'mongodb://localhost:27017/yelp-camp';
+// const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
+const dbUrl = 'mongodb://localhost:27017/yelp-camp';
 
 // 'mongodb://localhost:27017/yelp-camp'
 mongoose.connect(dbUrl, {
@@ -51,7 +52,11 @@ app.set('views', path.join(__dirname, 'views'))
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(mongoSanitize({
+    replaceWith: '_',
+}));
 
 // const { func } = require('joi');
 
@@ -96,7 +101,7 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
     console.log("In the main app.js");
-    console.log(req.session);
+    // console.log(req.session);
     res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');

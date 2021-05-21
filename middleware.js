@@ -17,10 +17,10 @@ module.exports.isLoggedIn = (req, res, next) => {
 };
 
 module.exports.validateCampground = (req, res, next) => {
-    const {error} = campgroundSchema.validate(req.body);
+    const { error } = campgroundSchema.validate(req.body);
     console.log("In The Middleware");
     console.log(req.body);
-    if(error){
+    if(error) {
         const msg = error.details.map(el => el.message).join(', ');
         next(new ExpressError(msg, 400));
     } else{

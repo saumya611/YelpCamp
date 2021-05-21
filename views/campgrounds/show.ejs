@@ -1,10 +1,39 @@
 <% layout('layouts/boilerplate.ejs') %>
 <link rel="stylesheet" href="/stylesheets/stars.css">
 
+
     <div class="row">
         <div class="col-6">
+            
+
+
+            <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <% for(let i=0;i < campground.images.length; i++){ %>
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="<%= i %>" class="<%= i===0 ? 'active' : '' %>" aria-current="<%= i===0 ? 'true' : '' %>" aria-label="Slide <%= i+1 %>"></button>
+                    <% }; %> 
+                </div>
+                <div class="carousel-inner">
+                    <% campground.images.forEach((img, i) => { %>
+                        <div class="carousel-item <%= i===0 ? 'active' : '' %>">
+                            <img src="<%= img.url %>" class="d-block w-100" alt="...">
+                        </div>                    
+                    <% }); %> 
+                </div>
+                <% if (campground.images.length > 1) {%>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                <% }; %>  
+
+            </div>
             <div class="card mb-3">
-                <img src="<%= campground.image %>" class="card-img-top" alt="...">
+
                 <% console.log(campground) %>
                 <div class="card-body">
                   <h5 class="card-title"><%= campground.title %></h5>
@@ -14,7 +43,6 @@
                   <li class="list-group-item text-muted"><%= campground.location %></li>
                   <li class="list-group-item">Submitted By <%= campground.author.username %></li>
                   <li class="list-group-item">$<%= campground.price %>/night</li>
-                  <!-- <li class="list-group-item">A third item</li> -->
                 </ul>
                 <% if(currentUser && campground.author.equals(currentUser._id)){ %> 
                     <div class="card-body">
@@ -30,6 +58,21 @@
               </div>
             </div>
         <div class="col-6">
+            <div id='cluster-map' style='width: 400px; height: 300px;'></div>
+            <!-- <div id="menu"> -->
+                <!-- <input id="satellite-v9" type="radio" name="rtoggle" value="satellite" checked="checked"> -->
+                <!-- See a list of Mapbox-hosted public styles at -->
+                <!-- https://docs.mapbox.com/api/maps/styles/#mapbox-styles -->
+                <!-- <label for="satellite-v9">satellite</label>
+                <input id="light-v10" type="radio" name="rtoggle" value="light">
+                <label for="light-v10">light</label>
+                <input id="dark-v10" type="radio" name="rtoggle" value="dark">
+                <label for="dark-v10">dark</label>
+                <input id="streets-v11" type="radio" name="rtoggle" value="streets">
+                <label for="streets-v11">streets</label>
+                <input id="outdoors-v11" type="radio" name="rtoggle" value="outdoors">
+                <label for="outdoors-v11">outdoors</label>
+            </div> -->
             <% if(currentUser){ %> 
             <h2>Leave a Review</h2>
             <form action="/campgrounds/<%= campground._id %>/reviews" method="post" class="mb-3 validated-form" novalidate>
@@ -83,3 +126,10 @@
             <% } %> 
         </div>
     </div>
+
+    
+    <script>
+        const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
+        const campground = <%- JSON.stringify(campground) %>;
+    </script>
+    <script src="/javascripts/showPageMap.js"></script>

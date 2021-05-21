@@ -1,16 +1,16 @@
 <% layout('layouts/boilerplate.ejs') %>
 <div class="row">
     <h1 class="text-center">Edit Campground</h1>
-    <div class="col-6 offset-3">
-        <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST" class="validated-form" novalidate>
+    <div class="col-md-6 offset-md-3">
+        <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST" class="validated-form" novalidate enctype="multipart/form-data">
             <div class="mb-3">
                 <label class="form-label" for="title">Title</label>
                 <input class="form-control" type="text" id="title" name="campground[title]" value="<%= campground.title %>" required>
                 <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="mb-3">
-                <label class="form-label" for="image">Image Url</label>
-                <input class="form-control" type="text" id="image" name="campground[image]" value="<%= campground.image %>" required>
+                <label for="image" class="form-label">Add More Images</label>
+                <input class="form-control" name="image" type="file" id="image" multiple>
                 <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="mb-3">
@@ -32,14 +32,19 @@
                 <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="mb-3">
+                <% campground.images.forEach(function(img, i) { %>
+                    <img src="<%= img.thumbnail %>" class="img-thumbnail" alt="">  
+                    <div class="form-check-inline">
+                        <input type="checkbox" id="image-<%= i %>" name="deleteImages[]" value="<%= img.filename %>"> 
+                    </div>    
+                    <label for="image-<%= i %> ">Delete?</label>            
+                <% }); %> 
+            </div>
+            <div class="mb-3">
                 <button class="btn btn-success">Update Campground</button>
             </div>
         </form>
-        <p><a href="/campgrounds">All Campgrounds</a></p>
-        <p><a href="/campgrounds/<%= campground._id %>">Back To Campground</a></p>
+        <a href="/campgrounds/<%= campground._id %>">Back To Campground</a>
 
     </div>
-
 </div>
-
-
