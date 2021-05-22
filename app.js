@@ -60,7 +60,9 @@ app.use(mongoSanitize({
 
 // const { func } = require('joi');
 
-const secret = process.env.SECRET || "it's my secret i'll not gonna tell you";
+// const secret = process.env.SECRET || "it's my secret i'll not gonna tell you";
+const secret = process.env.SECRET;
+
 
 const store = MongoStore.create({
     mongoUrl: dbUrl,
@@ -76,13 +78,15 @@ store.on("error", function (e) {
 });
 
 const sessionConfig = {
+    name: 'session',
     store,
     secret: secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
-        // By Above options third party can't access cookies 
+        // By Above options third party can't access cookies
+        // secure: true, 
         expires: Date.now() + 1000 * 60 *60 *24 *7,
         maxAge: 1000 * 60 *60 *24 *7
     }
