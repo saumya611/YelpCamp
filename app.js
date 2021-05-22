@@ -60,7 +60,6 @@ app.use(mongoSanitize({
 
 // const { func } = require('joi');
 
-// const secret = process.env.SECRET || "it's my secret i'll not gonna tell you";
 const secret = process.env.SECRET;
 
 
